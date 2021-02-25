@@ -1,0 +1,20 @@
+---
+apiVersion: kustomize.toolkit.fluxcd.io/v1beta1
+kind: Kustomization
+metadata:
+  name: linkerd
+  namespace: flux-system
+spec:
+  healthChecks:
+  - kind: Deployment
+    name: linkerd-proxy-injector
+    namespace: linkerd
+  interval: 1m0s
+  path: ./infrastructure/linkerd
+  prune: true
+  sourceRef:
+    kind: GitRepository
+    name: flux-system
+  timeout: 2m0s
+  validation: client
+
