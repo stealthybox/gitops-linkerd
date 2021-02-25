@@ -26,7 +26,7 @@ $ flux check --pre
 ✔ prerequisites checks passed
 ```
 
-Fork this repo, and create a [Personal Access Token]() with `repo` access.
+Fork this repo, and create a [Personal Access Token](https://github.com/settings/tokens) with `repo` access.
 Then export your github-user, repo name, and PAT.
 
 ```console
