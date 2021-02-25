@@ -9,10 +9,10 @@ or newer with Load Balancer support and RBAC enabled.
 
 ### Install Flux v2
 
-Install the CLI on MacOS and Linux using Homebrew run:
+Install the CLI on MacOS or Linux using Homebrew:
 
 ```sh
-brew install fluxcd/tap/flux
+brew install fluxcd/tap/flux yq
 ```
 
 Verify that your cluster satisfies the prerequisites with:
@@ -26,83 +26,29 @@ $ flux check --pre
 ✔ prerequisites checks passed
 ```
 
-Install the controllers on your cluster:
+Fork this repo, and create a [Personal Access Token]() with `repo` access.
+Then export your github-user, repo name, and PAT.
 
 ```console
-$ flux install --arch=amd64
-
-✚ generating manifests
-✔ manifests build completed
-► installing components in flux-system namespace
-✔ install completed
-◎ verifying installation
-✔ source-controller ready
-✔ kustomize-controller ready
-✔ helm-controller ready
-✔ notification-controller ready
-✔ install finished
+export GITHUB_USER=stealthybox
+export GITHUB_TOKEN="$(cat ~/.config/gh/flux-bootstrap-demos.pat)"
+export GITHUB_REPO=gitops-linkerd
 ```
 
-## Infrastructure setup
+Bootsrap Flux and your repository into your cluster.
+If you do not have one, you can create one with `kind create cluster`
 
-Create a source that points to this repository:
-
-```sh
-flux create source git gitops-linkerd \
---url=https://github.com/stefanprodan/gitops-linkerd \
---branch=main
+```console
+flux boostrap github \
+  --personal \
+  --owner "${GITHUB_USER}" \
+  --repository "${GITHUB_REPO}" \
+  --path "clusters/kind0"
 ```
 
-Create a Kustomization to reconcile Linkerd on your cluster:
+If you use a different `--path`, be sure to copy the `./flux-system-config` directory to it.
 
-```sh
-flux create kustomization linkerd \
---source=gitops-linkerd \
---path="./infrastructure/linkerd" \
---prune=true \
---validation=client \
---interval=1m \
---health-check="Deployment/linkerd-proxy-injector.linkerd"
-```
+The cluster will now boot a dependency tree including Flux, Linkerd, Contour, Flagger, and the frontend/backend podinfo workloads.
 
-Configure Flagger reconciliation specifying Linkerd as a dependency:
-
-```sh
-flux create kustomization flagger \
---depends-on=linkerd \
---source=gitops-linkerd \
---path="./infrastructure/flagger" \
---prune=true \
---validation=client \
---interval=1m \
---health-check="Deployment/flagger.linkerd"
-```
-
-Configure Contour reconciliation specifying Linkerd as a dependency:
-
-```sh
-flux create kustomization contour \
---depends-on=linkerd \
---source=gitops-linkerd \
---path="./infrastructure/contour" \
---prune=true \
---validation=client \
---interval=1m \
---health-check="Deployment/contour.projectcontour" \
---health-check="DaemonSet/envoy.projectcontour"
-```
-
-## Workloads setup
-
-Configure the frontend workload with A/B testing deployment strategy and
-the backend workload with progressive traffic shifting:
-
-```sh
-flux create kustomization workloads \
---depends-on=linkerd \
---source=gitops-linkerd \
---path="./workloads" \
---prune=true \
---validation=client \
---interval=1m
-```
+From here, you can carry on with Progressive Delivery experiments using the Flagger Canary objects for the frontend and backend.
+See the [EKS handson, Canary Releases and Canary Tests](https://eks.handson.flagger.dev/canary/#application-bootstrap) sections for more references.
