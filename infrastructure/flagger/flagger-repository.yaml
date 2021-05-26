@@ -7,7 +7,7 @@ spec:
   interval: 10m
   url: https://github.com/weaveworks/flagger
   ref:
-    tag: v1.6.4
+    tag: v1.9.0
   ignore: |
     /*
     !/kustomize
