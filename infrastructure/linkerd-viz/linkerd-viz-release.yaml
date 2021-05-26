@@ -1,0 +1,17 @@
+apiVersion: helm.toolkit.fluxcd.io/v2beta1
+kind: HelmRelease
+metadata:
+  name: linkerd-viz
+  namespace: linkerd-viz
+spec:
+  interval: 10m0s
+  releaseName: linkerd-viz
+  chart:
+    spec:
+      chart: linkerd-viz
+      sourceRef:
+        kind: HelmRepository
+        name: linkerd
+        namespace: linkerd
+  values:
+    installNamespace: false
