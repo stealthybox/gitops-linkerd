@@ -39,7 +39,7 @@ Bootsrap Flux and your repository into your cluster.
 If you do not have one, you can create one with `kind create cluster`
 
 ```console
-flux boostrap github \
+flux bootstrap github \
   --personal \
   --owner "${GITHUB_USER}" \
   --repository "${GITHUB_REPO}" \

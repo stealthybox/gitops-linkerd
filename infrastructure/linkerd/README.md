@@ -1,6 +1,6 @@
 # Generate Linkerd v2 certificates
 
-Install the step CLI on MacOS and Linux using Homebrew run:
+Install the [step CLI](https://smallstep.com/docs/step-ca/installation) on MacOS and Linux using Homebrew run:
 
 ```sh
 brew install step
